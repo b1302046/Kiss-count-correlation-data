@@ -1,0 +1,7 @@
+import pandas as pd
+
+df = pd.read_excel("DATA_Kiss_count_gender_and_IQ.xlsx")
+df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
+
+print("Average Values by Gender:")
+print(df.groupby("gender")[["iq", "kiss_count", "age_of_first_kiss"]].mean().round(2))
