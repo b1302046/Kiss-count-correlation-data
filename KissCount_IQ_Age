@@ -1,27 +1,22 @@
-from google.colab import files
-uploaded = files.upload()
-
-
-!pip install openpyxl
-
-
 import pandas as pd
-from scipy.stats import pearsonr, ttest_ind
+from scipy.stats import pearsonr
+import numpy as np
 
 df = pd.read_excel("DATA_Kiss_count_gender_and_IQ.xlsx")
 df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
 
 def get_stats(x, y):
     pair = pd.DataFrame({'x': x, 'y': y}).dropna()
+    n = len(pair)
     r, p_corr = pearsonr(pair['x'], pair['y'])
-    t_stat, p_t = ttest_ind(pair['x'], pair['y'], equal_var=False)
+    t_stat = (r * np.sqrt(n - 2)) / np.sqrt(1 - r**2)
     return r, t_stat, p_corr
 
 r1, t1, p1 = get_stats(df["iq"], df["kiss_count"])
 r2, t2, p2 = get_stats(df["iq"], df["age_of_first_kiss"])
 r3, t3, p3 = get_stats(df["kiss_count"], df["age_of_first_kiss"])
 
-print("Correlation and t-test results:")
+print("Correlation and t-test results based on r:")
 print(f"IQ vs Kiss Count:         r = {r1:.3f}, t = {t1:.3f}, p = {p1:.4f}")
 print(f"IQ vs Age of First Kiss:  r = {r2:.3f}, t = {t2:.3f}, p = {p2:.4f}")
 print(f"Kiss Count vs Age:        r = {r3:.3f}, t = {t3:.3f}, p = {p3:.4f}")
