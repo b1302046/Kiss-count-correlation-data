@@ -1,0 +1,21 @@
+import pandas as pd
+from scipy.stats import pearsonr
+import numpy as np
+
+# Change male into 0 and female into 1
+df = pd.read_excel("DATA_Kiss_count_gender_and_IQ.xlsx")
+
+df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
+
+for col in df.columns:
+    if col != 'gender':
+        pair = df[['gender', col]].dropna()
+        x = pair['gender']
+        y = pair[col]
+        
+        r, p = pearsonr(x, y)
+       
+        n = len(pair)
+        t = (r * np.sqrt(n - 2)) / np.sqrt(1 - r**2)
+        
+        print(f"Gender vs {col.capitalize()}: r = {r:.3f}, t = {t:.3f}, p = {p:.4f}")
